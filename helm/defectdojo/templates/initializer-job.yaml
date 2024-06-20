@@ -71,7 +71,13 @@ spec:
         {{- end }}
       {{- end }}
       - name: initializer
-        image: "{{ template "initializer.repository" . }}:{{ .Values.tag }}"
+        {{- if .Values.tag }}
+        image: '{{ template "initializer.repository" . }}:{{ .Values.tag }}'
+        {{- else if .Values.digest }}
+        image: '{{ template "initializer.repository" . }}@sha256:{{ .Values.digest }}'
+        {{- else }}
+        image: '{{ template "initializer.repository" . }}:latest'
+        {{- end }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         {{- if .Values.securityContext.enabled }}
         securityContext:

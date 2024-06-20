@@ -122,7 +122,13 @@ spec:
           timeoutSeconds: 5
       {{- end }}
       - name: uwsgi
+        {{- if .Values.tag }}
         image: '{{ template "django.uwsgi.repository" . }}:{{ .Values.tag }}'
+        {{- else if .Values.digest }}
+        image: '{{ template "django.uwsgi.repository" . }}@sha256:{{ .Values.digest }}'
+        {{- else }}
+        image: '{{ template "django.uwsgi.repository" . }}:latest'
+        {{- end }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         {{- if .Values.securityContext.enabled }}
         securityContext:
@@ -224,7 +230,13 @@ spec:
         resources:
           {{- toYaml .Values.django.uwsgi.resources | nindent 10 }}
       - name: nginx
+        {{- if .Values.tag }}
         image: '{{ template "django.nginx.repository" . }}:{{ .Values.tag }}'
+        {{- else if .Values.digest }}
+        image: '{{ template "django.nginx.repository" . }}@sha256:{{ .Values.digest }}'
+        {{- else }}
+        image: '{{ template "django.nginx.repository" . }}:latest'
+        {{- end }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         {{- if .Values.securityContext.enabled }}
         securityContext:

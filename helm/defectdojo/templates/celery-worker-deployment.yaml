@@ -87,7 +87,13 @@ spec:
         {{- end }}
       {{- end }}
       - name: celery
-        image: "{{ template "celery.repository" . }}:{{ .Values.tag }}"
+        {{- if .Values.tag }}
+        image: '{{ template "celery.repository" . }}:{{ .Values.tag }}'
+        {{- else if .Values.digest }}
+        image: '{{ template "celery.repository" . }}@sha256:{{ .Values.digest }}'
+        {{- else }}
+        image: '{{ template "celery.repository" . }}:latest'
+        {{- end }}
         imagePullPolicy: {{ .Values.imagePullPolicy }}
         {{- if .Values.securityContext.enabled }}
         securityContext:

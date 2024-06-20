@@ -18,7 +18,13 @@ spec:
   {{- end }}
   containers:
     - name: unit-tests
+      {{- if .Values.tag }}
       image: '{{ .Values.repositoryPrefix }}/defectdojo-django:{{ .Values.tag }}'
+      {{- else if .Values.digest }}
+      image: '{{ .Values.repositoryPrefix }}/defectdojo-django@sha256:{{ .Values.digest }}'
+      {{- else }}
+      image: '{{ .Values.repositoryPrefix }}/defectdojo-django:latest'
+      {{- end }}
       imagePullPolicy: {{ .Values.imagePullPolicy }}
       {{- if .Values.securityContext.enabled }}
       securityContext:
